@@ -62,48 +62,42 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 # 3. Basic Dataset Inspection
 
 # 4. Data Understanding
-
-## 4.1 Missing Values
-
-## 4.2 Duplicate Rows
-
-## 4.3 Data Types
-
-## 4.4 Descriptive Statistics
-
-## 4.5 Defect Class Distribution
-
-## 4.6 Target Variable
+├──## 4.1 Missing Values
+├──## 4.2 Duplicate Rows
+├──## 4.3 Data Types
+├──## 4.4 Descriptive Statistics
+├──## 4.5 Defect Class Distribution
+└──## 4.6 Target Variable
 
 # 5. Data Preprocessing
+├──## 5.1 Separate Features and Target
+├──## 5.2 Check Feature Scales
+└──## 5.3 Feature Scaling
 
-# 6. Exploratory Data Analysis (EDA)
+# 6. Exploratory Data Analysis (EDA)  ← NOW
+├──## 6.1 Defect Distribution
+├──## 6.2 Histograms
+├──## 6.3 Bar Chart
+├──## 6.4 Scatter Plot
+├──## 6.5 Box Plot
+├──## 6.6 Correlation Matrix and Heatmap
+└──## 6.7 Outlier and Relationship Analysis
 
 # 7. Classification
-
-## 7.1 Decision Tree
-
-## 7.2 Naive Bayes
-
-## 7.3 Support Vector Machine (SVM)
-
-## 7.4 Classification Model Comparison
+├──## 7.1 Decision Tree
+├──## 7.2 Naive Bayes
+├──## 7.3 Support Vector Machine (SVM)
+└──## 7.4 Classification Model Comparison
 
 # 8. Clustering
-
-## 8.1 Elbow Method
-
-## 8.2 K-Means Clustering
-
-## 8.3 Cluster Analysis
+├──## 8.1 Elbow Method
+├──## 8.2 K-Means Clustering
+└──## 8.3 Cluster Analysis
 
 # 9. Outlier Detection and Feature Importance
-
-## 9.1 Outlier Detection
-
-## 9.2 Random Forest
-
-## 9.3 Feature Importance
+├──## 9.1 Outlier Detection
+├──## 9.2 Random Forest
+└──## 9.3 Feature Importance
 
 # 10. Overall Results and Findings
 
