@@ -74,7 +74,7 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 ├──## 5.2 Check Feature Scales
 └──## 5.3 Feature Scaling
 
-# 6. Exploratory Data Analysis (EDA)  ← NOW
+# 6. Exploratory Data Analysis (EDA)
 ├──## 6.1 Defect Distribution
 ├──## 6.2 Histograms
 ├──## 6.3 Bar Chart
@@ -83,11 +83,13 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 ├──## 6.6 Correlation Matrix and Heatmap
 └──## 6.7 Outlier and Relationship Analysis
 
-# 7. Classification
-├──## 7.1 Decision Tree
-├──## 7.2 Naive Bayes
-├──## 7.3 Support Vector Machine (SVM)
-└──## 7.4 Classification Model Comparison
+# 7. Classification   ← NOW
+├──## 7.1 Train-Test Split
+├──## 7.2 Decision Tree
+├──## 7.3 Naive Bayes
+├──## 7.4 Support Vector Machine (SVM)
+├──## 7.5 Model Evaluation
+└──## 7.6 Classification Model Comparison
 
 # 8. Clustering
 ├──## 8.1 Elbow Method
