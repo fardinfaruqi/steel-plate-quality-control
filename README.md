@@ -156,19 +156,41 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 |   ├──### 8.6.3 Explained Variance
 |   ├──### 8.6.4 Cluster Visualization
 |   └──### 8.6.5 Cluster Centers
-└──## 8.7 Interpret Clusters
+├──## 8.7 Interpret Clusters
 |   ├──### 8.7.1 Cluster–Defect Table
 |   ├──### 8.7.2 Defect Counts
 |   ├──### 8.7.3 Defect Percentages
 |   ├──### 8.7.4 Heatmap
 |   ├──### 8.7.5 Dominant Defects
 |   └──### 8.7.6 Small Cluster Investigation
-└──## 8.8 Clustering Summary             ← NOW
+└──## 8.8 Clustering Summary
 
 # 9. Outlier Detection and Feature Importance
-├──## 9.1 Outlier Detection
-├──## 9.2 Random Forest
-└──## 9.3 Feature Importance
+├──## 9.1 Z-Score Method
+|   ├──### 9.1.1 Calculate Z-Scores
+|   ├──### 9.1.2 Identify Outliers
+|   ├──### 9.1.3 Count Extreme Features
+|   ├──### 9.1.4 Outlier Summary
+|   ├──### 9.1.5 Most Extreme Observations
+|   ├──### 9.1.6 Defect Type Analysis
+|   └──### 9.1.7 Visualization
+├──## 9.2 IQR Method
+|   ├──### 9.2.1 Calculate Q1, Q3 and IQR
+|   ├──### 9.2.2 Calculate Bounds
+|   ├──### 9.2.3 Identify Potential Outliers
+|   ├──### 9.2.4 Count Extreme Features
+|   └──### 9.2.5 IQR Outlier Summary
+├──## 9.3 Isolation Forest
+|   ├──### 9.3.1 Import Isolation Forest
+|   ├──### 9.3.2 Create Model
+|   ├──### 9.3.3 Train Model
+|   ├──### 9.3.4 Generate Predictions
+|   ├──### 9.3.5 Create Outlier Mask
+|   ├──### 9.3.6 Anomaly Scores
+|   ├──### 9.3.7 Outlier Summary
+|   └──### 9.3.8 Most Anomalous Observations                    ← NOW
+├──## 9.4 Compare Methods
+└──## 9.5 Investigate Outliers
 
 # 10. Overall Results and Findings
 
