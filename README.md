@@ -188,9 +188,23 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 |   ├──### 9.3.5 Create Outlier Mask
 |   ├──### 9.3.6 Anomaly Scores
 |   ├──### 9.3.7 Outlier Summary
-|   └──### 9.3.8 Most Anomalous Observations                    ← NOW
+|   └──### 9.3.8 Most Anomalous Observations
 ├──## 9.4 Compare Methods
+|   ├──### 9.4.1 Comparison DataFrame
+|   ├──### 9.4.2 Outlier Counts
+|   ├──### 9.4.3 Method Agreement
+|   ├──### 9.4.4 Consensus Outliers
+|   ├──### 9.4.5 All-Method Outliers
+|   ├──### 9.4.6 Visualization
+|   └──### 9.4.7 Interpretation
 └──## 9.5 Investigate Outliers
+    ├──### 9.5.1 Consensus Outlier Dataset       ← NOW
+    ├──### 9.5.2 Defect Type Analysis
+    ├──### 9.5.3 Defect Percentages
+    ├──### 9.5.4 Strongest Consensus Outliers
+    ├──### 9.5.5 Combined Investigation
+    ├──### 9.5.6 Inspect Row 391
+    └──### 9.5.7 Extreme Features
 
 # 10. Overall Results and Findings
 
