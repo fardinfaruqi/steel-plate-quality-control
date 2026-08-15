@@ -1,212 +1,277 @@
-# Steel Plate Quality Control
+# Steel Plate Quality Control Using Machine Learning
 
-Course mini-project: *A Data Mining Approach to Manufacturing Quality Control: Classification and Analysis of Steel Plate Defects*.
+Course project: *A Data Mining Approach to Manufacturing Quality Control: Classification and Analysis of Steel Plate Defects*.
 
-This repository currently contains only the isolated Python environment and project structure. No data-mining analysis has been added yet.
+## Overview
 
-## Folders
+This project develops an end-to-end machine-learning workflow for steel plate defect analysis. Using the provided steel plate fault dataset, the project covers data understanding, preprocessing, supervised classification, SVM hyperparameter tuning, unsupervised K-Means clustering, outlier detection, and Random Forest feature importance analysis.
 
-- `data/` — source dataset files
-- `notebooks/` — Jupyter notebooks
-- `outputs/figures/` — generated plots
-- `outputs/models/` — saved model artifacts
-- `reports/` — written project reports
+A tuned Support Vector Machine with an RBF kernel was selected as the final classification model. Its model and preprocessing artifacts were saved, a reusable prediction module was implemented, and a Streamlit-based prediction interface was built on top of it.
 
-## Environment
+The application is a machine-learning decision-support prototype for educational purposes. It is not an industrial inspection system and was not deployed or certified for production use.
 
-The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
+## Project Objectives
 
+- Inspect and understand the dataset.
+- Prepare the data for machine-learning analysis.
+- Convert the seven binary defect indicators into a single target variable.
+- Train and evaluate multiple classification models.
+- Establish a Linear SVM baseline.
+- Tune an SVM using cross-validation.
+- Compare classification models.
+- Perform K-Means clustering.
+- Analyze potential outliers using multiple methods.
+- Analyze feature importance using Random Forest.
+- Select a final classification model.
+- Save the model and preprocessing artifacts.
+- Develop a reusable prediction module.
+- Develop a Streamlit user interface.
 
-## Actual Project Report Structure:
-```txt
-1. Introduction
-2. Dataset Description
-3. Import Libraries
-4. Load Dataset
-5. Dataset Inspection
-6. Data Preprocessing
-   ├── Missing Values
-   ├── Duplicates
-   ├── Categorical Encoding
-   └── Feature Scaling
-7. Descriptive Statistics
-8. Exploratory Data Analysis
-   ├── Histograms
-   ├── Bar Charts
-   ├── Scatter Plots
-   ├── Box Plots
-   ├── Correlation Heatmap
-   └── Outlier Analysis
-9. Classification
-   ├── Decision Tree
-   ├── Naive Bayes
-   ├── SVM
-   └── Model Comparison
-10. Clustering
-    ├── Elbow Method
-    ├── K-Means
-    └── Cluster Interpretation
-11. Optional Random Forest
-    └── Feature Importance
-12. Overall Findings
-13. Conclusion
+## Dataset
+
+The initial dataset contains 1941 observations and 34 columns: numeric steel plate measurement/feature variables plus seven binary defect indicator columns.
+
+The seven defect classes are:
+
+- Pastry
+- Z_Scratch
+- K_Scatch
+- Stains
+- Dirtiness
+- Bumps
+- Other_Faults
+
+The seven binary defect indicators were converted into a single categorical target variable, `Defect_Type`. After target construction and removal of the indicator columns, the dataset contains 1941 rows and 28 columns: 27 predictive features and 1 target variable.
+
+- Missing values: 0
+- Duplicate rows: 0
+- Every observation has exactly one defect label.
+
+Defect distribution:
+
+| Defect Type | Count |
+|---|---:|
+| Pastry | 158 |
+| Z_Scratch | 190 |
+| K_Scatch | 391 |
+| Stains | 72 |
+| Dirtiness | 55 |
+| Bumps | 402 |
+| Other_Faults | 673 |
+
+## Machine Learning Workflow
+
+### 1. Data Understanding
+
+The dataset was inspected for missing values (none found), duplicate rows (none found), data types, and descriptive statistics. The class distribution was found to be imbalanced, with `Other_Faults`, `Bumps`, and `K_Scatch` being the most frequent classes.
+
+### 2. Data Preprocessing
+
+The seven binary defect indicators were converted into the `Defect_Type` target, the original indicator columns were removed from the feature matrix, the data was split into features (`X`) and target (`y`), and a train/test split was performed. Feature scaling (standardization) was applied for the SVM models, and the feature order used during training was preserved for later prediction.
+
+### 3. Classification
+
+Four classification models were evaluated:
+
+- Linear SVM
+- Tuned RBF SVM
+- Decision Tree
+- Naive Bayes
+
+### 4. Hyperparameter Tuning
+
+The SVM was tuned using cross-validation with grid search:
+
+- Best model: SVM
+- Kernel: RBF
+- C: 10
+- Cross-validation F1: 0.7621
+
+### 5. Model Comparison
+
+The tuned RBF SVM achieved the best overall accuracy and F1-score among the evaluated classifiers and was selected as the final classification model.
+
+### 6. K-Means Clustering
+
+K-Means clustering was applied to explore natural groupings in the data, and the elbow method was used to examine inertia across `K`. K = 6 was selected.
+
+### 7. Outlier Detection
+
+Potential outliers were investigated using three complementary methods:
+
+- Z-score
+- IQR
+- Isolation Forest
+
+### 8. Feature Importance
+
+A Random Forest model was used to estimate feature importance. The most important features included `LogOfAreas`, `Length_of_Conveyer`, `Pixels_Areas`, `Log_X_Index`, and `Outside_X_Index`.
+
+### 9. Final Model
+
+A tuned SVM with RBF kernel and C = 10 was selected as the final classification model.
+
+## Classification Results
+
+| Model | Accuracy | Precision | Recall | F1-Score |
+|---|---:|---:|---:|---:|
+| Tuned SVM (C=10, RBF) | 0.7635 | 0.7672 | 0.7635 | 0.7644 |
+| Decision Tree | 0.7455 | 0.7492 | 0.7455 | 0.7452 |
+| Linear SVM | 0.7326 | 0.7341 | 0.7326 | 0.7326 |
+| Naive Bayes | 0.4524 | 0.5741 | 0.4524 | 0.4003 |
+
+The tuned RBF SVM was selected as the final classification model because it achieved the strongest overall classification performance on both accuracy and F1-score.
+
+## Final Prediction Pipeline
+
+The inference pipeline is:
+
+```
+User input
+→ validation
+→ feature ordering
+→ svm_scaler.transform()
+→ tuned SVM
+→ predicted defect
 ```
 
+The prediction implementation is in `src/predict.py`. It validates that the input is a DataFrame, that the exact required feature set is present, that all values are numeric, and that no values are missing or NaN, and it reorders features according to the saved feature list before prediction.
 
-## Current project structure:
-```txt
-# 1. Import Libraries
+## Streamlit Application
 
-# 2. Load Dataset
+The application is located at `app/app.py`.
 
-# 3. Basic Dataset Inspection
+Run command:
 
-# 4. Data Understanding
-├──## 4.1 Missing Values
-├──## 4.2 Duplicate Rows
-├──## 4.3 Data Types
-├──## 4.4 Descriptive Statistics
-├──## 4.5 Defect Class Distribution
-└──## 4.6 Target Variable
-
-# 5. Data Preprocessing
-├──## 5.1 Separate Features and Target
-├──## 5.2 Check Feature Scales
-└──## 5.3 Feature Scaling
-
-# 6. Exploratory Data Analysis (EDA)
-├──## 6.1 Defect Distribution
-├──## 6.2 Histograms
-├──## 6.3 Bar Chart
-├──## 6.4 Scatter Plot
-├──## 6.5 Box Plot
-├──## 6.6 Correlation Matrix and Heatmap
-└──## 6.7 Outlier and Relationship Analysis
-
-# 7. Classification   ← NOW
-├──## 7.1 Train-Test Split
-├──## 7.2 Decision Tree
-|   ├──### 7.2.1 Train Model 
-|   ├──### 7.2.2 Make Predictions
-|   ├──### 7.2.3 Accuracy
-|   ├──### 7.2.4 Classification Report
-|   ├──### 7.2.5 Confusion Matrix
-|   └──### 7.2.6 Tree Visualization
-├──## 7.3 Naive Bayes
-|   ├──### 7.3.1 Train Model
-|   ├──### 7.3.2 Make Predictions
-|   ├──### 7.3.3 Accuracy
-|   ├──### 7.3.4 Classification Report
-|   └──### 7.3.5 Confusion Matrix
-├──## 7.4 Support Vector Machine (SVM)
-|   ├──### 7.4.1 Scale Training/Test Data
-|   ├──### 7.4.2 Train Linear SVM
-|   ├──### 7.4.3 Make Predictions
-|   ├──### 7.4.4 Accuracy
-|   ├──### 7.4.5 Classification Report
-|   └──### 7.4.6 Confusion Matrix
-├──## 7.5 Model Evaluation     ← NOW
-|   ├──### 7.5.1 Evaluation Metrics
-|   ├──### 7.5.2 Comparison Table
-|   ├──### 7.5.3 Rounded Results
-|   ├──### 7.5.4 Visual Comparison
-|   └──### 7.5.5 Best Baseline Model
-├──## 7.6 Classification Model Comparison
-|   ├──### 7.6.1 Display the Final Baseline Comparison
-|   ├──### 7.6.2 Rank the Models
-|   ├──### 7.6.3 Identify the Best Baseline Model
-|   ├──### 7.6.4 Compare the Models Visually
-|   ├──### 7.6.5 Check the Individual Defect Performance
-|   └──### 7.6.6 Find the Best Model for Each Defect
-├──## 7.7 SVM Hyperparameter Tuning
-|   ├──### 7.7.1 Define Parameters
-|   ├──### 7.7.2 Grid Search
-|   ├──### 7.7.3 Best Parameters
-|   ├──### 7.7.4 Grid Search Results
-|   ├──### 7.7.5 Best SVM
-|   └──### 7.7.6 Tuned SVM Predictions
-└──## 7.8 Tuned SVM Evaluation
-|   ├──### 7.8.1 Tuned SVM Accuracy
-|   ├──### 7.8.2 Classification Report
-|   ├──### 7.8.3 Confusion Matrix
-|   └──### 7.8.4 Compare Baseline vs Tuned SVM
-└──## 7.9 Final Classification Results
-
-# 8. Clustering
-├──## 8.1 Prepare Data for Clustering
-├──## 8.2 K-Means Clustering
-|   ├──### 8.2.1 Import K-Means
-|   ├──### 8.2.2 Create K-Means Model
-|   ├──### 8.2.3 Get Cluster Labels
-|   ├──### 8.2.4 Count Cluster Observations
-|   └──### 8.2.5 Calculate Inertia
-├──## 8.3 Elbow Method
-|   ├──### 8.3.1 Calculate Inertia
-|   ├──### 8.3.2 Display Results
-|   ├──### 8.3.3 Plot Elbow Curve
-|   └──### 8.3.4 Select K
-├──## 8.4 Choose Number of Clusters
-├──## 8.5 Train Final K-Means Model
-|   ├──### 8.5.1 Final Cluster Labels
-|   ├──### 8.5.2 Cluster Counts
-|   └──### 8.5.3 Add Labels to Dataset
-├──## 8.6 Visualize Clusters
-|   ├──### 8.6.1 Import PCA
-|   ├──### 8.6.2 PCA Transformation
-|   ├──### 8.6.3 Explained Variance
-|   ├──### 8.6.4 Cluster Visualization
-|   └──### 8.6.5 Cluster Centers
-├──## 8.7 Interpret Clusters
-|   ├──### 8.7.1 Cluster–Defect Table
-|   ├──### 8.7.2 Defect Counts
-|   ├──### 8.7.3 Defect Percentages
-|   ├──### 8.7.4 Heatmap
-|   ├──### 8.7.5 Dominant Defects
-|   └──### 8.7.6 Small Cluster Investigation
-└──## 8.8 Clustering Summary
-
-# 9. Outlier Detection and Feature Importance
-├──## 9.1 Z-Score Method
-|   ├──### 9.1.1 Calculate Z-Scores
-|   ├──### 9.1.2 Identify Outliers
-|   ├──### 9.1.3 Count Extreme Features
-|   ├──### 9.1.4 Outlier Summary
-|   ├──### 9.1.5 Most Extreme Observations
-|   ├──### 9.1.6 Defect Type Analysis
-|   └──### 9.1.7 Visualization
-├──## 9.2 IQR Method
-|   ├──### 9.2.1 Calculate Q1, Q3 and IQR
-|   ├──### 9.2.2 Calculate Bounds
-|   ├──### 9.2.3 Identify Potential Outliers
-|   ├──### 9.2.4 Count Extreme Features
-|   └──### 9.2.5 IQR Outlier Summary
-├──## 9.3 Isolation Forest
-|   ├──### 9.3.1 Import Isolation Forest
-|   ├──### 9.3.2 Create Model
-|   ├──### 9.3.3 Train Model
-|   ├──### 9.3.4 Generate Predictions
-|   ├──### 9.3.5 Create Outlier Mask
-|   ├──### 9.3.6 Anomaly Scores
-|   ├──### 9.3.7 Outlier Summary
-|   └──### 9.3.8 Most Anomalous Observations
-├──## 9.4 Compare Methods
-|   ├──### 9.4.1 Comparison DataFrame
-|   ├──### 9.4.2 Outlier Counts
-|   ├──### 9.4.3 Method Agreement
-|   ├──### 9.4.4 Consensus Outliers
-|   ├──### 9.4.5 All-Method Outliers
-|   ├──### 9.4.6 Visualization
-|   └──### 9.4.7 Interpretation
-└──## 9.5 Investigate Outliers
-    ├──### 9.5.1 Consensus Outlier Dataset       ← NOW
-    ├──### 9.5.2 Defect Type Analysis
-    ├──### 9.5.3 Defect Percentages
-    ├──### 9.5.4 Strongest Consensus Outliers
-    ├──### 9.5.5 Combined Investigation
-    ├──### 9.5.6 Inspect Row 391
-    └──### 9.5.7 Extreme Features
-
-# 10. Overall Results and Findings
-
-# 11. Conclusion
 ```
+.venv\Scripts\python -m streamlit run app/app.py
+```
+
+The application:
+
+- provides 27 feature inputs
+- groups the inputs into logical sections
+- provides an example input loaded from the dataset
+- predicts the steel plate defect type
+- displays model information in the sidebar
+- includes a disclaimer
+- uses the reusable prediction module (`src/predict.py`)
+- does not display fabricated probability/confidence values
+
+Browser testing of the application was successfully completed. Note that the SVM does not provide probability output because the saved model was trained with `probability=False`; no confidence score is shown or claimed.
+
+## Project Structure
+
+```
+steel-plate-quality-control/
+│
+├── app/
+│   └── app.py
+│
+├── data/
+│   ├── Faults.NNA
+│   └── Faults27x7_var
+│
+├── notebooks/
+│   └── steel_plate_quality_control.ipynb
+│
+├── outputs/
+│   ├── .matplotlib/
+│   ├── figures/          # (empty; plots are shown inline in the notebook)
+│   └── models/
+│       ├── feature_names.pkl
+│       ├── scaler.pkl
+│       ├── svm_scaler.pkl
+│       └── tuned_svm_model.pkl
+│
+├── reports/
+│   └── STEEL_PLATE_QUALITY_CONTROL_LAB_REPORT.md
+│
+├── src/
+│   ├── __init__.py
+│   ├── extract_svm_scaler.py
+│   ├── predict.py
+│   ├── test_prediction.py
+│   └── verify_model.py
+│
+├── README.md
+├── REAL_APPLICATION_ROADMAP.md
+└── requirements.txt
+```
+
+## Installation
+
+Create and activate a virtual environment:
+
+```
+python -m venv .venv
+```
+
+Windows activation:
+
+```
+.venv\Scripts\activate
+```
+
+Install the dependencies:
+
+```
+pip install -r requirements.txt
+```
+
+## Running the Application
+
+```
+.venv\Scripts\python -m streamlit run app/app.py
+```
+
+The application loads the saved model and preprocessing artifacts. It does not retrain the model.
+
+## Model Artifacts
+
+```
+outputs/models/
+├── tuned_svm_model.pkl
+├── svm_scaler.pkl
+├── feature_names.pkl
+└── scaler.pkl
+```
+
+- `tuned_svm_model.pkl` — the final trained RBF SVM (SVC, C = 10).
+- `svm_scaler.pkl` — the StandardScaler fitted on the training data, used for SVM inference.
+- `feature_names.pkl` — the expected 27 feature names and their order.
+- `scaler.pkl` — a legacy scaler fitted on the full dataset, retained for audit/documentation purposes. It is **not** used for inference.
+
+### Important scaler note
+
+There are two scaler files:
+
+- `outputs/models/scaler.pkl` — legacy scaler fitted on the full dataset. It is retained for audit/documentation purposes and is **not** used for final model inference.
+- `outputs/models/svm_scaler.pkl` — the correct scaler for the final SVM. It was fitted on the training data and is used by `src/predict.py`.
+
+The final inference pipeline uses `outputs/models/svm_scaler.pkl`.
+
+## Limitations
+
+- The final model achieves approximately 76% classification accuracy, so predictions are not always correct.
+- The dataset has a class imbalance, and no balancing technique was applied.
+- The outlier methods identify potential statistical anomalies, not guaranteed data errors or physically defective plates.
+- The Streamlit application is a prototype/decision-support tool, not a certified industrial inspection system.
+- The current SVM does not provide probability/confidence output because the saved model was trained with `probability=False`.
+- The results are based on the provided dataset and should not automatically be generalized to other steel manufacturing environments.
+
+## Lab Report
+
+The detailed academic analysis is documented in:
+
+`reports/STEEL_PLATE_QUALITY_CONTROL_LAB_REPORT.md`
+
+The lab report covers the data analysis, preprocessing, model experiments, evaluation, clustering, outlier analysis, feature importance, final model selection, and application documentation in detail.
+
+## Roadmap
+
+`REAL_APPLICATION_ROADMAP.md` contains the original project/application planning roadmap. Some filenames in the roadmap are aspirational examples from the planning stage and differ from the final implementation.
+
+## License / Academic Note
+
+This repository represents an academic/course project demonstrating a machine-learning workflow. It is provided for educational purposes and is not licensed for commercial or production use.
