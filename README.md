@@ -149,9 +149,21 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 ├──## 8.5 Train Final K-Means Model
 |   ├──### 8.5.1 Final Cluster Labels
 |   ├──### 8.5.2 Cluster Counts
-|   └──### 8.5.3 Add Labels to Dataset           ← NOW
+|   └──### 8.5.3 Add Labels to Dataset
 ├──## 8.6 Visualize Clusters
+|   ├──### 8.6.1 Import PCA
+|   ├──### 8.6.2 PCA Transformation
+|   ├──### 8.6.3 Explained Variance
+|   ├──### 8.6.4 Cluster Visualization
+|   └──### 8.6.5 Cluster Centers
 └──## 8.7 Interpret Clusters
+|   ├──### 8.7.1 Cluster–Defect Table
+|   ├──### 8.7.2 Defect Counts
+|   ├──### 8.7.3 Defect Percentages
+|   ├──### 8.7.4 Heatmap
+|   ├──### 8.7.5 Dominant Defects
+|   └──### 8.7.6 Small Cluster Investigation
+└──## 8.8 Clustering Summary             ← NOW
 
 # 9. Outlier Detection and Feature Importance
 ├──## 9.1 Outlier Detection
