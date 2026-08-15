@@ -86,15 +86,72 @@ The project uses `.venv` and the Jupyter kernel **Steel Plate Quality Control**.
 # 7. Classification   ← NOW
 ├──## 7.1 Train-Test Split
 ├──## 7.2 Decision Tree
+|   ├──### 7.2.1 Train Model 
+|   ├──### 7.2.2 Make Predictions
+|   ├──### 7.2.3 Accuracy
+|   ├──### 7.2.4 Classification Report
+|   ├──### 7.2.5 Confusion Matrix
+|   └──### 7.2.6 Tree Visualization
 ├──## 7.3 Naive Bayes
+|   ├──### 7.3.1 Train Model
+|   ├──### 7.3.2 Make Predictions
+|   ├──### 7.3.3 Accuracy
+|   ├──### 7.3.4 Classification Report
+|   └──### 7.3.5 Confusion Matrix
 ├──## 7.4 Support Vector Machine (SVM)
-├──## 7.5 Model Evaluation
-└──## 7.6 Classification Model Comparison
+|   ├──### 7.4.1 Scale Training/Test Data
+|   ├──### 7.4.2 Train Linear SVM
+|   ├──### 7.4.3 Make Predictions
+|   ├──### 7.4.4 Accuracy
+|   ├──### 7.4.5 Classification Report
+|   └──### 7.4.6 Confusion Matrix
+├──## 7.5 Model Evaluation     ← NOW
+|   ├──### 7.5.1 Evaluation Metrics
+|   ├──### 7.5.2 Comparison Table
+|   ├──### 7.5.3 Rounded Results
+|   ├──### 7.5.4 Visual Comparison
+|   └──### 7.5.5 Best Baseline Model
+├──## 7.6 Classification Model Comparison
+|   ├──### 7.6.1 Display the Final Baseline Comparison
+|   ├──### 7.6.2 Rank the Models
+|   ├──### 7.6.3 Identify the Best Baseline Model
+|   ├──### 7.6.4 Compare the Models Visually
+|   ├──### 7.6.5 Check the Individual Defect Performance
+|   └──### 7.6.6 Find the Best Model for Each Defect
+├──## 7.7 SVM Hyperparameter Tuning
+|   ├──### 7.7.1 Define Parameters
+|   ├──### 7.7.2 Grid Search
+|   ├──### 7.7.3 Best Parameters
+|   ├──### 7.7.4 Grid Search Results
+|   ├──### 7.7.5 Best SVM
+|   └──### 7.7.6 Tuned SVM Predictions
+└──## 7.8 Tuned SVM Evaluation
+|   ├──### 7.8.1 Tuned SVM Accuracy
+|   ├──### 7.8.2 Classification Report
+|   ├──### 7.8.3 Confusion Matrix
+|   └──### 7.8.4 Compare Baseline vs Tuned SVM
+└──## 7.9 Final Classification Results
 
 # 8. Clustering
-├──## 8.1 Elbow Method
+├──## 8.1 Prepare Data for Clustering
 ├──## 8.2 K-Means Clustering
-└──## 8.3 Cluster Analysis
+|   ├──### 8.2.1 Import K-Means
+|   ├──### 8.2.2 Create K-Means Model
+|   ├──### 8.2.3 Get Cluster Labels
+|   ├──### 8.2.4 Count Cluster Observations
+|   └──### 8.2.5 Calculate Inertia
+├──## 8.3 Elbow Method
+|   ├──### 8.3.1 Calculate Inertia
+|   ├──### 8.3.2 Display Results
+|   ├──### 8.3.3 Plot Elbow Curve
+|   └──### 8.3.4 Select K
+├──## 8.4 Choose Number of Clusters
+├──## 8.5 Train Final K-Means Model
+|   ├──### 8.5.1 Final Cluster Labels
+|   ├──### 8.5.2 Cluster Counts
+|   └──### 8.5.3 Add Labels to Dataset           ← NOW
+├──## 8.6 Visualize Clusters
+└──## 8.7 Interpret Clusters
 
 # 9. Outlier Detection and Feature Importance
 ├──## 9.1 Outlier Detection
