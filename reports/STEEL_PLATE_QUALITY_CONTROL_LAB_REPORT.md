@@ -65,7 +65,39 @@ The dataset contained only numerical data. The 27 feature variables were a mix o
 
 ### 4.4 Descriptive Statistics
 
-Descriptive statistics were generated for the feature columns to inspect their distributions. The summary included, for each feature, its range, mean, standard deviation, and minimum and maximum values. This provided an initial understanding of feature scales and variability, which was relevant because SVM models are sensitive to the scale of the input features.
+Descriptive statistics were generated for the feature columns to inspect their distributions. The summary included, for each feature, its count, mean, standard deviation, and minimum, quartile, and maximum values.
+
+| Feature | Count | Mean | Std | Min | 25% | 50% | 75% | Max |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| X_Minimum | 1941 | 571.1360 | 520.6907 | 0 | 51 | 435 | 1053 | 1705 |
+| X_Maximum | 1941 | 617.9645 | 497.6274 | 4 | 192 | 467 | 1072 | 1713 |
+| Y_Minimum | 1941 | 1.6507e+06 | 1.7746e+06 | 6712 | 4.7125e+05 | 1.2041e+06 | 2.1831e+06 | 1.2988e+07 |
+| Y_Maximum | 1941 | 1.6507e+06 | 1.7746e+06 | 6724 | 4.7128e+05 | 1.2041e+06 | 2.1831e+06 | 1.2988e+07 |
+| Pixels_Areas | 1941 | 1893.8784 | 5168.4596 | 2 | 84 | 174 | 822 | 152655 |
+| X_Perimeter | 1941 | 111.8552 | 301.2092 | 2 | 15 | 26 | 84 | 10449 |
+| Y_Perimeter | 1941 | 82.9660 | 426.4829 | 1 | 13 | 25 | 83 | 18152 |
+| Sum_of_Luminosity | 1941 | 2.0631e+05 | 5.1229e+05 | 250 | 9522 | 19202 | 83011 | 1.1591e+07 |
+| Minimum_of_Luminosity | 1941 | 84.5487 | 32.1343 | 0 | 63 | 90 | 106 | 203 |
+| Maximum_of_Luminosity | 1941 | 130.1937 | 18.6910 | 37 | 124 | 127 | 140 | 253 |
+| Length_of_Conveyer | 1941 | 1459.1602 | 144.5778 | 1227 | 1358 | 1364 | 1650 | 1794 |
+| TypeOfSteel_A300 | 1941 | 0.4003 | 0.4901 | 0 | 0 | 0 | 1 | 1 |
+| TypeOfSteel_A400 | 1941 | 0.5997 | 0.4901 | 0 | 0 | 1 | 1 | 1 |
+| Steel_Plate_Thickness | 1941 | 78.7378 | 55.0860 | 40 | 40 | 70 | 80 | 300 |
+| Edges_Index | 1941 | 0.3317 | 0.2997 | 0 | 0.0604 | 0.2273 | 0.5738 | 0.9952 |
+| Empty_Index | 1941 | 0.4142 | 0.1373 | 0 | 0.3158 | 0.4121 | 0.5016 | 0.9439 |
+| Square_Index | 1941 | 0.5708 | 0.2711 | 0.0083 | 0.3613 | 0.5556 | 0.8182 | 1 |
+| Outside_X_Index | 1941 | 0.0334 | 0.0590 | 0.0015 | 0.0066 | 0.0101 | 0.0235 | 0.8759 |
+| Edges_X_Index | 1941 | 0.6105 | 0.2433 | 0.0144 | 0.4118 | 0.6364 | 0.8000 | 1 |
+| Edges_Y_Index | 1941 | 0.8135 | 0.2343 | 0.0484 | 0.5968 | 0.9474 | 1 | 1 |
+| Outside_Global_Index | 1941 | 0.5757 | 0.4824 | 0 | 0 | 1 | 1 | 1 |
+| LogOfAreas | 1941 | 2.4924 | 0.7889 | 0.3010 | 1.9243 | 2.2406 | 2.9149 | 5.1837 |
+| Log_X_Index | 1941 | 1.3357 | 0.4816 | 0.3010 | 1 | 1.1761 | 1.5185 | 3.0741 |
+| Log_Y_Index | 1941 | 1.4033 | 0.4543 | 0 | 1.0792 | 1.3222 | 1.7324 | 4.2587 |
+| Orientation_Index | 1941 | 0.0833 | 0.5009 | -0.9910 | -0.3333 | 0.0952 | 0.5116 | 0.9917 |
+| Luminosity_Index | 1941 | -0.1313 | 0.1488 | -0.9989 | -0.1950 | -0.1330 | -0.0666 | 0.6421 |
+| SigmoidOfAreas | 1941 | 0.5854 | 0.3395 | 0.1190 | 0.2482 | 0.5063 | 0.9998 | 1 |
+
+The statistics show that the features span very different scales. For example, the position features such as `Y_Minimum` and `Y_Maximum` have values in the millions, while index features such as `SigmoidOfAreas` or `Luminosity_Index` range roughly between -1 and 1. This large variation in scale is why feature scaling was applied for the SVM models.
 
 ### 4.5 Defect Class Distribution
 
@@ -84,6 +116,12 @@ The distribution of plates across the seven defect classes was:
 
 The class distribution was imbalanced: `Other_Faults`, `Bumps`, and `K_Scatch` together accounted for a large share of the observations, whereas `Dirtiness`, `Stains`, and `Pastry` were much less frequent. This imbalance was taken into account when interpreting the results. No class-balancing technique was applied during the project.
 
+![Defect class distribution](../outputs/figures/defect_class_distribution.png)
+
+*Figure 1. Distribution of steel plate observations across defect classes.*
+
+The bar chart makes the imbalance visible: `Other_Faults` is by far the most frequent class, followed by `Bumps` and `K_Scatch`, while `Dirtiness` and `Stains` have fewer than 100 observations each.
+
 ### 4.6 Target Variable
 
 The seven binary defect indicator columns were converted into the single categorical target `Defect_Type`. For each row, the defect whose indicator column was set to 1 was taken as the plate's defect type.
@@ -93,6 +131,16 @@ Validation of the constructed target confirmed that every observation received e
 - Minimum labels per row = 1
 - Maximum labels per row = 1
 - Rows with exactly one defect label = 1941
+
+### 4.7 Feature Correlations
+
+The correlations between the 27 predictive features were examined with a correlation matrix and heatmap, computed on the full feature matrix.
+
+![Correlation matrix of the 27 predictive features](../outputs/figures/feature_correlation_heatmap.png)
+
+*Figure 2. Correlation matrix of the 27 predictive features.*
+
+The heatmap shows groups of strongly correlated features. For example, the geometry-related features (`Pixels_Areas`, `X_Perimeter`, `Y_Perimeter`, `Sum_of_Luminosity`) are strongly positively correlated with each other, and the area-derived log features (`LogOfAreas`, `Log_X_Index`, `Log_Y_Index`, `SigmoidOfAreas`) are also highly correlated. This structure is expected because many features are derived from the same underlying plate measurements.
 
 ## 5. Data Preprocessing
 
@@ -140,6 +188,12 @@ The tuned SVM evaluated on the held-out test set achieved:
 - Recall = 0.7635
 - F1-Score = 0.7644
 
+![Tuned SVM confusion matrix](../outputs/figures/tuned_svm_confusion_matrix.png)
+
+*Figure 3. Confusion matrix of the tuned RBF SVM on the test set.*
+
+The confusion matrix shows that `K_Scatch` (74 of 78 correct) and `Stains` (12 of 14 correct) were separated very well, while the main source of confusion was between `Bumps` and `Other_Faults`: 20 `Bumps` plates were predicted as `Other_Faults` and 23 `Other_Faults` plates were predicted as `Bumps`. `Pastry` was also frequently confused with `Other_Faults`. These observations are consistent with the per-class recall values in the tuned SVM classification report.
+
 ### 6.3 Decision Tree
 
 A Decision Tree classifier was trained and evaluated. Its test-set results were:
@@ -171,6 +225,12 @@ The test-set results of the four classifiers are summarized below.
 
 The tuned RBF SVM achieved the highest accuracy and the highest F1-score among the evaluated classifiers, and it also showed the best precision and recall. Because F1-score balances precision and recall, and the tuned SVM outperformed the other models on both accuracy and F1-score, it was selected as the best classification model. No claim of statistical significance is made; the selection was based on the evaluated performance on the test set.
 
+![Classification model performance comparison](../outputs/figures/model_performance_comparison.png)
+
+*Figure 4. Comparison of the classification models on the four evaluation metrics.*
+
+The grouped bar chart shows that the tuned RBF SVM leads on all four metrics. The Decision Tree and the Linear SVM perform similarly to each other and slightly below the tuned SVM, while Naive Bayes is clearly the weakest model, with a particularly low F1-score.
+
 ## 8. Unsupervised Learning — K-Means Clustering
 
 K-Means clustering was applied to explore whether the steel plates form natural groups based on their feature values. The elbow method was used to help choose the number of clusters by inspecting how the within-cluster inertia changes with the number of clusters `K`.
@@ -189,7 +249,11 @@ The inertia values computed for `K` from 2 to 10 were:
 | 9 | 22597.36 |
 | 10 | 21488.97 |
 
-In the notebook's clustering analysis, `K = 6` was selected as the number of clusters. The final K-Means model was trained with this value, producing the following cluster sizes:
+![K-Means elbow curve](../outputs/figures/kmeans_elbow_curve.png)
+
+*Figure 5. K-Means elbow curve. The selected value K = 6 is highlighted.*
+
+The inertia decreases as `K` increases, with a marked drop up to about `K = 6` and a progressively smaller decrease afterwards. In the notebook's clustering analysis, `K = 6` was selected as the number of clusters. The final K-Means model was trained with this value, producing the following cluster sizes:
 
 | Cluster | Number of Plates |
 |---:|---:|
@@ -200,7 +264,19 @@ In the notebook's clustering analysis, `K = 6` was selected as the number of clu
 | 4 | 1 |
 | 5 | 247 |
 
+![Cluster distribution](../outputs/figures/cluster_distribution.png)
+
+*Figure 6. Number of steel plates assigned to each cluster by the final K-Means model.*
+
+The clusters are highly imbalanced in size: clusters 3, 1, and 0 contain most of the plates, while cluster 4 contains only a single plate and cluster 2 contains 125 plates.
+
 The clusters were then examined against the known defect types to understand their composition, for example by identifying the dominant defect type within each cluster. This analysis described the structure found by K-Means; the clusters were not asserted to represent physically meaningful defect categories beyond what the analysis showed.
+
+![Defect distribution within clusters](../outputs/figures/cluster_defect_heatmap.png)
+
+*Figure 7. Defect type distribution within each K-Means cluster (cell values are counts of plates).*
+
+The heatmap shows that some clusters are strongly associated with particular defect types. For example, cluster 2 is dominated by `K_Scatch` (121 of 125 plates), cluster 5 is also mostly `K_Scatch` (206 of 247), cluster 3 is dominated by `Bumps`, and clusters 0 and 1 are dominated by `Other_Faults`. The single-plate cluster 4 contains one `K_Scatch` plate whose features are extreme compared with the rest of the dataset.
 
 ## 9. Outlier Detection
 
@@ -235,9 +311,19 @@ Isolation Forest is an algorithmic method that isolates anomalous observations.
 
 The three methods did not always agree on which observations were outliers, so the observations were examined according to how many methods flagged them.
 
+![Potential outliers detected by each method](../outputs/figures/outlier_method_comparison.png)
+
+*Figure 8. Number and percentage of observations flagged as potential outliers by each method.*
+
+The IQR method flags a much larger share of observations (42.45%) than the Z-score method (10.87%) or Isolation Forest (9.99%). This large difference means the methods should be combined rather than used in isolation.
+
 Observations flagged by at least two of the three methods: 289.
 
 Observations flagged by all three methods (three-method consensus): 102.
+
+![Overlap between outlier detection methods](../outputs/figures/outlier_overlap.png)
+
+*Figure 9. Overlap between the outlier detection methods: observations flagged by at least two methods and by all three methods.*
 
 The 102 observations flagged by all three methods were further examined by defect type:
 
@@ -267,6 +353,12 @@ A Random Forest classifier was used to estimate the importance of each feature i
 | 8 | Sum_of_Luminosity | 0.042909 |
 | 9 | Minimum_of_Luminosity | 0.041634 |
 | 10 | Edges_Index | 0.038157 |
+
+![Random Forest feature importance](../outputs/figures/random_forest_feature_importance.png)
+
+*Figure 10. Random Forest feature importance for the top 10 features (horizontal bars, highest importance on top).*
+
+The area and geometry-related features dominate the ranking, with `LogOfAreas` and `Length_of_Conveyer` clearly ahead of the other features.
 
 According to the notebook analysis, the top ten features accounted for approximately 50.22% of the total Random Forest feature importance. Feature importance indicates the predictive contribution of each feature within the Random Forest model; it should not automatically be interpreted as evidence of a causal relationship with the defect type.
 
@@ -328,6 +420,10 @@ A Streamlit application was developed at `app/app.py` to expose the trained mode
 
 The user interface is a thin layer over the reusable prediction module: it calls functions from `src/predict.py` and does not re-implement model loading, feature ordering, or scaling itself.
 
+![Streamlit application](../outputs/figures/streamlit_app.png)
+
+*Figure 11. The Streamlit prediction application showing the grouped feature inputs and a predicted defect result.*
+
 The application was successfully tested in a browser. For example, dataset row 5 (actual defect: `Pastry`) was loaded through the example functionality and the application predicted `Pastry`. This single example demonstrates that the interface works end to end; it does not by itself prove the model's accuracy.
 
 ## 14. Limitations
@@ -363,12 +459,14 @@ steel-plate-quality-control/
 ├── notebooks/
 │   └── steel_plate_quality_control.ipynb
 ├── outputs/
+│   ├── figures/              # report figures generated in this project
 │   └── models/
 │       ├── feature_names.pkl
 │       ├── scaler.pkl
 │       ├── svm_scaler.pkl
 │       └── tuned_svm_model.pkl
 ├── reports/
+│   └── STEEL_PLATE_QUALITY_CONTROL_LAB_REPORT.md
 ├── src/
 │   ├── __init__.py
 │   ├── extract_svm_scaler.py
@@ -380,7 +478,7 @@ steel-plate-quality-control/
 └── requirements.txt
 ```
 
-The `outputs/figures/` directory also exists but is currently empty, because the analysis plots were retained and displayed in the notebook rather than exported as separate files.
+The `outputs/figures/` directory contains the report-quality figures generated for this document (for example, the defect distribution, correlation heatmap, model comparison, clustering, outlier, and feature importance figures, as well as a screenshot of the Streamlit application).
 
 ## 17. Reproducibility / Running the Application
 

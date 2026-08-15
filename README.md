@@ -59,6 +59,8 @@ Defect distribution:
 | Bumps | 402 |
 | Other_Faults | 673 |
 
+![Defect class distribution](outputs/figures/defect_class_distribution.png)
+
 ## Machine Learning Workflow
 
 ### 1. Data Understanding
@@ -95,6 +97,8 @@ The tuned RBF SVM achieved the best overall accuracy and F1-score among the eval
 
 K-Means clustering was applied to explore natural groupings in the data, and the elbow method was used to examine inertia across `K`. K = 6 was selected.
 
+![K-Means elbow curve](outputs/figures/kmeans_elbow_curve.png)
+
 ### 7. Outlier Detection
 
 Potential outliers were investigated using three complementary methods:
@@ -105,7 +109,9 @@ Potential outliers were investigated using three complementary methods:
 
 ### 8. Feature Importance
 
-A Random Forest model was used to estimate feature importance. The most important features included `LogOfAreas`, `Length_of_Conveyer`, `Pixels_Areas`, `Log_X_Index`, and `Outside_X_Index`.
+A Random Forest model was used to estimate feature importance. The most important features included `LogOfAreas`, `Length_of_Conveyer`, `Pixels_Areas`, `Log_X_Index`, and `Outside_X_Index`. The top 10 features accounted for approximately 50.22% of the total Random Forest feature importance.
+
+![Random Forest feature importance](outputs/figures/random_forest_feature_importance.png)
 
 ### 9. Final Model
 
@@ -119,6 +125,8 @@ A tuned SVM with RBF kernel and C = 10 was selected as the final classification 
 | Decision Tree | 0.7455 | 0.7492 | 0.7455 | 0.7452 |
 | Linear SVM | 0.7326 | 0.7341 | 0.7326 | 0.7326 |
 | Naive Bayes | 0.4524 | 0.5741 | 0.4524 | 0.4003 |
+
+![Classification model performance comparison](outputs/figures/model_performance_comparison.png)
 
 The tuned RBF SVM was selected as the final classification model because it achieved the strongest overall classification performance on both accuracy and F1-score.
 
@@ -158,6 +166,8 @@ The application:
 - uses the reusable prediction module (`src/predict.py`)
 - does not display fabricated probability/confidence values
 
+![Streamlit application](outputs/figures/streamlit_app.png)
+
 Browser testing of the application was successfully completed. Note that the SVM does not provide probability output because the saved model was trained with `probability=False`; no confidence score is shown or claimed.
 
 ## Project Structure
@@ -177,7 +187,7 @@ steel-plate-quality-control/
 │
 ├── outputs/
 │   ├── .matplotlib/
-│   ├── figures/          # (empty; plots are shown inline in the notebook)
+│   ├── figures/          # generated figures (report and README visuals)
 │   └── models/
 │       ├── feature_names.pkl
 │       ├── scaler.pkl
