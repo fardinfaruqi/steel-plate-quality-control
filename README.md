@@ -147,6 +147,11 @@ The prediction implementation is in `src/predict.py`. It validates that the inpu
 ```
 steel-plate-quality-control/
 │
+├── api/                      # FastAPI service powering the web UI
+│   ├── main.py
+│   ├── requirements.txt
+│   └── test_api.py
+│
 ├── data/
 │   ├── Faults.NNA
 │   └── Faults27x7_var
@@ -155,11 +160,9 @@ steel-plate-quality-control/
 │   └── steel_plate_quality_control.ipynb
 │
 ├── outputs/
-│   ├── .matplotlib/
 │   ├── figures/          # generated figures (report and README visuals)
 │   └── models/
 │       ├── feature_names.pkl
-│       ├── scaler.pkl
 │       ├── svm_scaler.pkl
 │       └── tuned_svm_model.pkl
 │
@@ -168,10 +171,16 @@ steel-plate-quality-control/
 │
 ├── src/
 │   ├── __init__.py
-│   ├── extract_svm_scaler.py
-│   ├── predict.py
+│   ├── data.py              # shared dataset loading + train/test split
+│   ├── predict.py           # production inference module
 │   ├── test_prediction.py
 │   └── verify_model.py
+│
+├── frontend/                # React web UI (Vite + TypeScript + Tailwind)
+│   ├── src/
+│   ├── public/
+│   ├── README.md
+│   └── package.json
 │
 ├── README.md
 └── requirements.txt
@@ -183,23 +192,18 @@ steel-plate-quality-control/
 outputs/models/
 ├── tuned_svm_model.pkl
 ├── svm_scaler.pkl
-├── feature_names.pkl
-└── scaler.pkl
+└── feature_names.pkl
 ```
 
 - `tuned_svm_model.pkl` — the final trained RBF SVM (SVC, C = 10).
 - `svm_scaler.pkl` — the StandardScaler fitted on the training data, used for SVM inference.
 - `feature_names.pkl` — the expected 27 feature names and their order.
-- `scaler.pkl` — a legacy scaler fitted on the full dataset, retained for audit/documentation purposes. It is **not** used for inference.
 
-### Important scaler note
+> The notebook originally saved a legacy scaler fitted on the full dataset
+> (`outputs/models/scaler.pkl`); it was never used for inference and has been
+> removed from the repository. See the notebook's Section 12 for the full
+> documentation of this historical detail.
 
-There are two scaler files:
-
-- `outputs/models/scaler.pkl` — legacy scaler fitted on the full dataset. It is retained for audit/documentation purposes and is **not** used for final model inference.
-- `outputs/models/svm_scaler.pkl` — the correct scaler for the final SVM. It was fitted on the training data and is used by `src/predict.py`.
-
-The final inference pipeline uses `outputs/models/svm_scaler.pkl`.
 
 ## Limitations
 

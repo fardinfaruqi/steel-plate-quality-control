@@ -386,9 +386,12 @@ The final model and its preprocessing artifacts were saved under `outputs/models
 - `svm_scaler.pkl` — the StandardScaler fitted on the training data, used to scale new input before prediction.
 - `feature_names.pkl` — the list of the 27 features in the exact order expected by the model.
 
-An additional file, `outputs/models/scaler.pkl`, is also present. This is a LEGACY scaler. It was fitted on the full feature dataset and was not the scaler used during final SVM training. The correct SVM scaler is `svm_scaler.pkl`, which was fitted using the training data and is the scaler used for inference.
-
-`scaler.pkl` is retained as a legacy artifact for audit/documentation purposes but is not used by the final prediction pipeline.
+> **Historical note:** The notebook originally saved a legacy scaler fitted on
+> the full dataset (`outputs/models/scaler.pkl`). It was not the scaler used
+> during final SVM training and was never used for inference. The correct
+> scaler is `svm_scaler.pkl`, fitted on the training data. The legacy file was
+> removed from the repository; see notebook Section 12 for the full account of
+> this detail.
 
 The inference pipeline is:
 
@@ -429,6 +432,7 @@ The final structure of the repository is:
 
 ```
 steel-plate-quality-control/
+├── api/                      # FastAPI service powering the web UI
 ├── data/
 ├── notebooks/
 │   └── steel_plate_quality_control.ipynb
@@ -436,17 +440,17 @@ steel-plate-quality-control/
 │   ├── figures/              # report figures generated in this project
 │   └── models/
 │       ├── feature_names.pkl
-│       ├── scaler.pkl
 │       ├── svm_scaler.pkl
 │       └── tuned_svm_model.pkl
 ├── reports/
 │   └── STEEL_PLATE_QUALITY_CONTROL_LAB_REPORT.md
 ├── src/
 │   ├── __init__.py
-│   ├── extract_svm_scaler.py
+│   ├── data.py              # shared dataset loading + train/test split
 │   ├── predict.py
 │   ├── test_prediction.py
 │   └── verify_model.py
+├── frontend/                # React web UI (Vite + TypeScript + Tailwind)
 ├── README.md
 └── requirements.txt
 ```

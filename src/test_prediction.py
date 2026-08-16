@@ -14,34 +14,13 @@ from pathlib import Path
 import joblib
 import pandas as pd
 
+from data import load_plate_data
 from predict import predict_defect, predict_defects
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
 MODELS_DIR = PROJECT_ROOT / "outputs" / "models"
 
-DATA_PATH = DATA_DIR / "Faults.NNA"
-COLUMNS_PATH = DATA_DIR / "Faults27x7_var"
 FEATURES_PATH = MODELS_DIR / "feature_names.pkl"
-
-FAULT_COLUMNS = [
-    "Pastry", "Z_Scratch", "K_Scatch", "Stains",
-    "Dirtiness", "Bumps", "Other_Faults",
-]
-
-
-def load_dataset():
-    """Rebuild the notebook's X (27 features) and y (Defect_Type)."""
-    with open(COLUMNS_PATH, "r") as f:
-        columns = [line.strip() for line in f]
-
-    df = pd.read_csv(DATA_PATH, sep="\t", header=None, names=columns)
-    df["Defect_Type"] = df[FAULT_COLUMNS].idxmax(axis=1)
-    df = df.drop(columns=FAULT_COLUMNS)
-
-    X = df.drop(columns=["Defect_Type"])
-    y = df["Defect_Type"]
-    return X, y
 
 
 def report(name, ok, detail=""):
@@ -50,7 +29,7 @@ def report(name, ok, detail=""):
 
 def main():
     feature_names = joblib.load(FEATURES_PATH)
-    X, y = load_dataset()
+    X, y = load_plate_data()
 
     print("=" * 72)
     print("TEST - REAL OBSERVATION (main path)")

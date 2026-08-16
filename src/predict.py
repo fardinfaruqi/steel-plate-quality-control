@@ -9,7 +9,6 @@ Artifacts used (DO NOT change these):
                                          used to train the final SVM)
   outputs/models/feature_names.pkl    - the 27 features in model order
 
-The old outputs/models/scaler.pkl (fitted on the FULL dataset) is NOT used.
 The scaler is never refitted during prediction.
 
 Typical usage:

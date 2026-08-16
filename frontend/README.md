@@ -84,7 +84,7 @@ Base URL: `http://localhost:8000`
 |---|---|---|
 | `/api/health` | GET | Service status. |
 | `/api/metadata` | GET | Feature order, input groups, integer/binary features, model info, UI copy, and fault types. |
-| `/api/examples` | GET | All 1941 dataset rows with their actual defect labels, in model feature order. |
+| `/api/examples` | GET | The 389 held-out test-set rows (the model never saw them during training) with their actual defect labels, in model feature order. |
 | `/api/predict` | POST | Body `{"features": {<feature>: <value>, ...}}` → `{"prediction": "..."}`. Returns 400 if the feature set is invalid. |
 
 Interactive docs are available at `http://localhost:8000/docs` while the API is running.
@@ -97,6 +97,3 @@ Run the API contract tests from the project root:
 .venv\Scripts\python -m pytest api/test_api.py
 ```
 
-## Project Planning Roadmap
-
-`REAL_APPLICATION_ROADMAP.md` contains the original application planning roadmap. Some filenames in the roadmap are aspirational examples from the planning stage and differ from the final implementation.

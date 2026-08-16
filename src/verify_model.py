@@ -1,4 +1,4 @@
-"""PHASE 2 - Verify the saved model artifacts with the correct SVM scaler.
+"""PHASE 2 - Verify the saved model artifacts.
 
 Verifies (read-only) the artifacts that define the production pipeline:
   outputs/models/tuned_svm_model.pkl   - final tuned SVM (SVC, C=10, RBF)
@@ -6,8 +6,9 @@ Verifies (read-only) the artifacts that define the production pipeline:
                                           train the final SVM)
   outputs/models/feature_names.pkl     - the 27 features in model order
 
-The old outputs/models/scaler.pkl (fitted on the full feature matrix X,
-NOT the scaler used for SVM training) is loaded only for comparison.
+The scaler used for inference is svm_scaler.pkl. A legacy scaler fitted on
+the full feature matrix was removed from the repository; the notebook
+(Section 12) documents why it was never used for SVM inference.
 
 This script does NOT retrain, fit, or modify any artifact.
 """
@@ -15,34 +16,15 @@ This script does NOT retrain, fit, or modify any artifact.
 from pathlib import Path
 
 import joblib
-import numpy as np
-import pandas as pd
+
+from data import load_plate_data
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 MODELS_DIR = PROJECT_ROOT / "outputs" / "models"
-DATA_DIR = PROJECT_ROOT / "data"
 
 MODEL_PATH = MODELS_DIR / "tuned_svm_model.pkl"
 SVM_SCALER_PATH = MODELS_DIR / "svm_scaler.pkl"
-OLD_SCALER_PATH = MODELS_DIR / "scaler.pkl"
 FEATURES_PATH = MODELS_DIR / "feature_names.pkl"
-DATA_PATH = DATA_DIR / "Faults.NNA"
-COLUMNS_PATH = DATA_DIR / "Faults27x7_var"
-
-EXPECTED_FEATURES = [
-    "X_Minimum", "X_Maximum", "Y_Minimum", "Y_Maximum", "Pixels_Areas",
-    "X_Perimeter", "Y_Perimeter", "Sum_of_Luminosity", "Minimum_of_Luminosity",
-    "Maximum_of_Luminosity", "Length_of_Conveyer", "TypeOfSteel_A300",
-    "TypeOfSteel_A400", "Steel_Plate_Thickness", "Edges_Index", "Empty_Index",
-    "Square_Index", "Outside_X_Index", "Edges_X_Index", "Edges_Y_Index",
-    "Outside_Global_Index", "LogOfAreas", "Log_X_Index", "Log_Y_Index",
-    "Orientation_Index", "Luminosity_Index", "SigmoidOfAreas",
-]
-
-FAULT_COLUMNS = [
-    "Pastry", "Z_Scratch", "K_Scatch", "Stains",
-    "Dirtiness", "Bumps", "Other_Faults",
-]
 
 
 def section(title):
@@ -64,30 +46,6 @@ def probability_supported(model):
     )
 
 
-def load_observation():
-    """Rebuild the dataset exactly as the notebook does and return X, y."""
-    with open(COLUMNS_PATH, "r") as f:
-        columns = [line.strip() for line in f]
-
-    df = pd.read_csv(DATA_PATH, sep="\t", header=None, names=columns)
-    df["Defect_Type"] = df[FAULT_COLUMNS].idxmax(axis=1)
-    df = df.drop(columns=FAULT_COLUMNS)
-
-    X = df.drop(columns=["Defect_Type"])
-    y = df["Defect_Type"]
-    return X, y
-
-
-def scaler_stats_table(scaler, feature_names):
-    return pd.DataFrame(
-        {
-            "mean_": scaler.mean_,
-            "scale_": scaler.scale_,
-        },
-        index=feature_names,
-    )
-
-
 def main():
     # ------------------------------------------------------------------
     section("STEP 1/2 - LOCATE svm_scaler IN NOTEBOOK (documented)")
@@ -106,12 +64,11 @@ def main():
     # ------------------------------------------------------------------
     section("STEP 4 - LOAD AND VERIFY ARTIFACTS")
     # ------------------------------------------------------------------
-    for path in (MODEL_PATH, SVM_SCALER_PATH, FEATURES_PATH, OLD_SCALER_PATH):
+    for path in (MODEL_PATH, SVM_SCALER_PATH, FEATURES_PATH):
         print(f"{path.name}: {'EXISTS' if path.exists() else 'MISSING'} ({path})")
 
     model = joblib.load(MODEL_PATH)
     svm_scaler = joblib.load(SVM_SCALER_PATH)
-    old_scaler = joblib.load(OLD_SCALER_PATH)
     feature_names = joblib.load(FEATURES_PATH)
 
     print(f"\nModel type        : {type(model).__name__}")
@@ -123,20 +80,20 @@ def main():
         print(f"  {i:2d}. {name}")
 
     # ------------------------------------------------------------------
-    section("FEATURE ORDER vs EXPECTED 27 FEATURES")
+    section("FEATURE ORDER vs svm_scaler FEATURE ORDER")
     # ------------------------------------------------------------------
-    if isinstance(feature_names, list) and feature_names == EXPECTED_FEATURES:
-        print("MATCH: feature_names.pkl contains exactly the 27 expected "
-              "features in the expected order.")
+    scaler_features = list(getattr(svm_scaler, "feature_names_in_", []))
+    if isinstance(feature_names, list) and feature_names == scaler_features:
+        print("MATCH: feature_names.pkl matches svm_scaler's feature order.")
     else:
         print("MISMATCH DETECTED:")
-        print("  Saved features          :", feature_names)
-        print("  Expected (27) features  :", EXPECTED_FEATURES)
-        if set(feature_names) != set(EXPECTED_FEATURES):
-            print("  Missing in saved :",
-                  sorted(set(EXPECTED_FEATURES) - set(feature_names)))
-            print("  Extra in saved   :",
-                  sorted(set(feature_names) - set(EXPECTED_FEATURES)))
+        print("  feature_names.pkl   :", feature_names)
+        print("  svm_scaler order    :", scaler_features)
+        if set(feature_names) != set(scaler_features):
+            print("  Missing in pkl  :",
+                  sorted(set(scaler_features) - set(feature_names)))
+            print("  Extra in pkl    :",
+                  sorted(set(feature_names) - set(scaler_features)))
 
     # ------------------------------------------------------------------
     section("FINAL SVM - INPUT AND CAPABILITIES")
@@ -170,53 +127,9 @@ def main():
             print(f"  {i:2d}. {name}")
 
     # ------------------------------------------------------------------
-    section("STEP 5 - OLD scaler.pkl vs CORRECT svm_scaler.pkl")
-    # ------------------------------------------------------------------
-    print("old_scaler type  :", type(old_scaler).__name__,
-          "| n_features_in_:", getattr(old_scaler, "n_features_in_", "n/a"))
-    print("svm_scaler type  :", type(svm_scaler).__name__,
-          "| n_features_in_:", getattr(svm_scaler, "n_features_in_", "n/a"))
-
-    old_stats = scaler_stats_table(old_scaler, feature_names)
-    new_stats = scaler_stats_table(svm_scaler, feature_names)
-
-    mean_diff = (old_stats["mean_"] - new_stats["mean_"]).abs()
-    scale_diff = (old_stats["scale_"] - new_stats["scale_"]).abs()
-
-    print("\nFitted on:")
-    print("  old_scaler  : FULL feature matrix X (notebook cell 29 / 5.3)")
-    print("  svm_scaler  : X_train only (notebook cell 86 / 7.4); the scaler")
-    print("                actually used to train the final SVM.")
-    print("  The two differ only because of the data they were fit on;")
-    print("  algorithm and parameters are identical StandardScaler.")
-
-    print("\nMean (mean_) differences, old - new:")
-    print(f"  max |diff| = {mean_diff.max():.6e}  "
-          f"mean |diff| = {mean_diff.mean():.6e}")
-    print("Scale (scale_) differences, old - new:")
-    print(f"  max |diff| = {scale_diff.max():.6e}  "
-          f"mean |diff| = {scale_diff.mean():.6e}")
-
-    worst_mean = mean_diff.idxmax()
-    worst_scale = scale_diff.idxmax()
-    print(f"  largest mean  gap  on feature: {worst_mean} "
-          f"({mean_diff[worst_mean]:.6e})")
-    print(f"  largest scale gap  on feature: {worst_scale} "
-          f"({scale_diff[worst_scale]:.6e})")
-
-    print("\nPer-feature table (mean_ and scale_):")
-    compare = old_stats.copy()
-    compare.columns = ["old_mean_", "old_scale_"]
-    compare["new_mean_"] = new_stats["mean_"]
-    compare["new_scale_"] = new_stats["scale_"]
-    compare["mean_diff"] = mean_diff.values
-    compare["scale_diff"] = scale_diff.values
-    print(compare.round(6).to_string())
-
-    # ------------------------------------------------------------------
     section("STEP 6 - INFERENCE WITH THE CORRECT svm_scaler")
     # ------------------------------------------------------------------
-    X, y = load_observation()
+    X, y = load_plate_data()
     print(f"Rebuilt feature matrix shape : {X.shape}")
     print(f"Rebuilt target shape         : {y.shape}")
     print(f"Target classes               : {sorted(y.unique())}")
@@ -244,19 +157,6 @@ def main():
         print("\nProbability support       : NOT AVAILABLE")
         print("(saved SVC was trained with probability=False; predict_proba() "
               "raises AttributeError. No confidence value is fabricated.)")
-
-    # ------------------------------------------------------------------
-    section("STEP 7 - OLD SCALER vs CORRECT SCALER PREDICTION")
-    # ------------------------------------------------------------------
-    pred_old = model.predict(old_scaler.transform(obs))[0]
-    pred_new = model.predict(svm_scaler.transform(obs))[0]
-    print(f"Old scaler.pkl    -> {pred_old}")
-    print(f"svm_scaler.pkl    -> {pred_new}")
-    if pred_old == pred_new:
-        print("Same prediction for this observation.")
-    else:
-        print("Different predictions for this observation -> scaler choice "
-              "matters.")
 
     # ------------------------------------------------------------------
     section("STEP 9 - VERIFICATION STATUS")

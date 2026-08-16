@@ -21,22 +21,13 @@ import pandas as pd
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sklearn.model_selection import train_test_split
 
+from src.data import FAULT_COLUMNS, load_plate_data, train_test_split_plates
 from src.predict import get_feature_names, predict_defect
 
 # ---------------------------------------------------------------------------
-# Dataset / constants (mirrors the feature definitions used across the app)
+# Constants (mirrors the feature definitions used across the app)
 # ---------------------------------------------------------------------------
-DATA_DIR = PROJECT_ROOT / "data"
-DATA_PATH = DATA_DIR / "Faults.NNA"
-COLUMNS_PATH = DATA_DIR / "Faults27x7_var"
-
-FAULT_COLUMNS = [
-    "Pastry", "Z_Scratch", "K_Scatch", "Stains",
-    "Dirtiness", "Bumps", "Other_Faults",
-]
-
 BINARY_FEATURES = {"TypeOfSteel_A300", "TypeOfSteel_A400"}
 
 INTEGER_FEATURES = {
@@ -80,10 +71,7 @@ MODEL_INFO = {
 ABOUT_MODEL = {
     "Model": "Tuned Support Vector Machine",
     "Kernel": "RBF",
-    "C": "10",
-    "Number of input features": "27",
-    "Test Accuracy": "76.35%",
-    "Test F1-Score": "76.44%",
+    **MODEL_INFO,
 }
 
 DISCLAIMER = (
@@ -118,21 +106,9 @@ def load_examples():
     actual defect type, used only to label examples for reference; it is
     never used as model input.
     """
-    with open(COLUMNS_PATH, "r") as f:
-        columns = [line.strip() for line in f]
-    df = pd.read_csv(DATA_PATH, sep="\t", header=None, names=columns)
-    df["Defect_Type"] = df[FAULT_COLUMNS].idxmax(axis=1)
-    df = df.drop(columns=FAULT_COLUMNS)
-    X = df.drop(columns=["Defect_Type"])
-    y = df["Defect_Type"]
+    X, y = load_plate_data()
 
-    _, X_test, _, y_test = train_test_split(
-        X,
-        y,
-        test_size=0.20,
-        random_state=42,
-        stratify=y,
-    )
+    _, X_test, _, y_test = train_test_split_plates(X, y)
 
     feature_order = get_feature_names()
     X_test = X_test[feature_order]

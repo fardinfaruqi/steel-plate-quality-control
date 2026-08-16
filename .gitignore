@@ -3,3 +3,7 @@ __pycache__/
 .playwright-mcp/
 node_modules/
 frontend/dist/
+.pytest_cache/
+outputs/.matplotlib/
+# Legacy full-data scaler; the notebook (Section 12) can regenerate it.
+outputs/models/scaler.pkl
