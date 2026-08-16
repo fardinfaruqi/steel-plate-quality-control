@@ -6,9 +6,7 @@ Course project: *A Data Mining Approach to Manufacturing Quality Control: Classi
 
 This project develops an end-to-end machine-learning workflow for steel plate defect analysis. Using the provided steel plate fault dataset, the project covers data understanding, preprocessing, supervised classification, SVM hyperparameter tuning, unsupervised K-Means clustering, outlier detection, and Random Forest feature importance analysis.
 
-A tuned Support Vector Machine with an RBF kernel was selected as the final classification model. Its model and preprocessing artifacts were saved, a reusable prediction module was implemented, and a Streamlit-based prediction interface was built on top of it.
-
-The application is a machine-learning decision-support prototype for educational purposes. It is not an industrial inspection system and was not deployed or certified for production use.
+A tuned Support Vector Machine with an RBF kernel was selected as the final classification model. Its model and preprocessing artifacts were saved, and a reusable prediction module was implemented on top of them.
 
 ## Project Objectives
 
@@ -25,7 +23,6 @@ The application is a machine-learning decision-support prototype for educational
 - Select a final classification model.
 - Save the model and preprocessing artifacts.
 - Develop a reusable prediction module.
-- Develop a Streamlit user interface.
 
 ## Dataset
 
@@ -145,38 +142,10 @@ User input
 
 The prediction implementation is in `src/predict.py`. It validates that the input is a DataFrame, that the exact required feature set is present, that all values are numeric, and that no values are missing or NaN, and it reorders features according to the saved feature list before prediction.
 
-## Streamlit Application
-
-The application is located at `app/app.py`.
-
-Run command:
-
-```
-.venv\Scripts\python -m streamlit run app/app.py
-```
-
-The application:
-
-- provides 27 feature inputs
-- groups the inputs into logical sections
-- provides an example input loaded from the dataset
-- predicts the steel plate defect type
-- displays model information in the sidebar
-- includes a disclaimer
-- uses the reusable prediction module (`src/predict.py`)
-- does not display fabricated probability/confidence values
-
-![Streamlit application](outputs/figures/streamlit_app.png)
-
-Browser testing of the application was successfully completed. Note that the SVM does not provide probability output because the saved model was trained with `probability=False`; no confidence score is shown or claimed.
-
 ## Project Structure
 
 ```
 steel-plate-quality-control/
-│
-├── app/
-│   └── app.py
 │
 ├── data/
 │   ├── Faults.NNA
@@ -205,37 +174,8 @@ steel-plate-quality-control/
 │   └── verify_model.py
 │
 ├── README.md
-├── REAL_APPLICATION_ROADMAP.md
 └── requirements.txt
 ```
-
-## Installation
-
-Create and activate a virtual environment:
-
-```
-python -m venv .venv
-```
-
-Windows activation:
-
-```
-.venv\Scripts\activate
-```
-
-Install the dependencies:
-
-```
-pip install -r requirements.txt
-```
-
-## Running the Application
-
-```
-.venv\Scripts\python -m streamlit run app/app.py
-```
-
-The application loads the saved model and preprocessing artifacts. It does not retrain the model.
 
 ## Model Artifacts
 
@@ -266,7 +206,6 @@ The final inference pipeline uses `outputs/models/svm_scaler.pkl`.
 - The final model achieves approximately 76% classification accuracy, so predictions are not always correct.
 - The dataset has a class imbalance, and no balancing technique was applied.
 - The outlier methods identify potential statistical anomalies, not guaranteed data errors or physically defective plates.
-- The Streamlit application is a prototype/decision-support tool, not a certified industrial inspection system.
 - The current SVM does not provide probability/confidence output because the saved model was trained with `probability=False`.
 - The results are based on the provided dataset and should not automatically be generalized to other steel manufacturing environments.
 
@@ -276,11 +215,7 @@ The detailed academic analysis is documented in:
 
 `reports/STEEL_PLATE_QUALITY_CONTROL_LAB_REPORT.md`
 
-The lab report covers the data analysis, preprocessing, model experiments, evaluation, clustering, outlier analysis, feature importance, final model selection, and application documentation in detail.
-
-## Roadmap
-
-`REAL_APPLICATION_ROADMAP.md` contains the original project/application planning roadmap. Some filenames in the roadmap are aspirational examples from the planning stage and differ from the final implementation.
+The lab report covers the data analysis, preprocessing, model experiments, evaluation, clustering, outlier analysis, feature importance, and final model selection in detail.
 
 ## License / Academic Note
 

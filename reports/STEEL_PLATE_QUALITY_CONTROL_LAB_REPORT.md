@@ -6,9 +6,7 @@ Quality control is a critical stage in steel manufacturing, where defects on the
 
 This project analyzed the provided steel plate fault dataset, which contains measurements collected for steel plates together with the defect class assigned to each plate. The work combined supervised learning, to predict the defect type of a plate, with unsupervised learning, to explore whether plates naturally group into clusters. Potential outliers were also investigated with several statistical and algorithmic methods, and a Random Forest model was used to estimate which features most influence the classification of defects.
 
-Based on the results of the model comparison, a tuned Support Vector Machine (SVM) with an RBF kernel was selected as the final classification model. The trained model and its associated preprocessing artifacts were saved to disk, and a reusable prediction module was built around them. A Streamlit-based user interface was then developed so that new steel plate measurements can be entered and a predicted defect type returned.
-
-The application is a machine-learning decision-support prototype. It was developed for educational purposes and was not deployed in, or certified for, a real industrial inspection line.
+Based on the results of the model comparison, a tuned Support Vector Machine (SVM) with an RBF kernel was selected as the final classification model. The trained model and its associated preprocessing artifacts were saved to disk, and a reusable prediction module was built around them so that new steel plate measurements can be turned into a predicted defect type.
 
 ## 2. Objectives
 
@@ -27,7 +25,6 @@ The objectives of the project were:
 11. Select a final classification model.
 12. Save the model and preprocessing artifacts.
 13. Develop a reusable prediction module.
-14. Develop a Streamlit user interface.
 
 ## 3. Dataset Description
 
@@ -406,55 +403,32 @@ Input
 
 The prediction module validates the input before making a prediction. It checks that the input is a DataFrame, that all required features are present, that no extra features are included, that all values are numeric, that no values are missing (NaN), and that the features are used in the correct order.
 
-## 13. Streamlit User Interface
-
-A Streamlit application was developed at `app/app.py` to expose the trained model as an interactive prediction interface. The application provides:
-
-- input fields for all 27 features;
-- logical grouping of the inputs into related sections;
-- a predict button that runs the model on the entered values;
-- example input functionality that loads real observations from the dataset;
-- display of the predicted defect type;
-- a sidebar with information about the model; and
-- a disclaimer noting that the tool is for decision support rather than a replacement for physical inspection.
-
-The user interface is a thin layer over the reusable prediction module: it calls functions from `src/predict.py` and does not re-implement model loading, feature ordering, or scaling itself.
-
-![Streamlit application](../outputs/figures/streamlit_app.png)
-
-*Figure 11. The Streamlit prediction application showing the grouped feature inputs and a predicted defect result.*
-
-The application was successfully tested in a browser. For example, dataset row 5 (actual defect: `Pastry`) was loaded through the example functionality and the application predicted `Pastry`. This single example demonstrates that the interface works end to end; it does not by itself prove the model's accuracy.
-
-## 14. Limitations
+## 13. Limitations
 
 The project has several limitations that should be kept in mind:
 
 1. The test accuracy of the final model is approximately 76%, so predictions are not always correct.
 2. The dataset has a class imbalance, and no balancing technique was applied.
 3. Outlier detection identifies potential statistical anomalies, not necessarily data errors or physically defective plates.
-4. The Streamlit application is a prototype/decision-support tool rather than a certified industrial inspection system.
-5. The SVM does not provide probability/confidence output because the saved model was trained with `probability=False`.
-6. The analysis was performed on the provided dataset and should not automatically be generalized to other steel manufacturing environments.
+4. The SVM does not provide probability/confidence output because the saved model was trained with `probability=False`.
+5. The analysis was performed on the provided dataset and should not automatically be generalized to other steel manufacturing environments.
 
-## 15. Conclusion
+## 14. Conclusion
 
 This project carried out an end-to-end machine-learning workflow for steel plate defect analysis. The dataset was inspected and prepared, the seven binary defect indicators were converted into a single `Defect_Type` target, and four classification models were trained and evaluated. The tuned RBF SVM (C=10) achieved the best overall performance, with a test accuracy of 76.35% and an F1-score of 76.44%.
 
 In addition to classification, K-Means clustering was used to explore natural groupings of the plates, three complementary methods were applied to detect potential outliers, and Random Forest feature importance identified the features with the strongest predictive contribution.
 
-The final SVM, its scaler, and the feature list were saved as reusable artifacts, and a prediction module was built to run the inference pipeline: validation, feature ordering, scaling, and prediction. A Streamlit user interface was developed on top of this module so that new steel plate measurements can be entered and a predicted defect type returned.
+The final SVM, its scaler, and the feature list were saved as reusable artifacts, and a prediction module was built to run the inference pipeline: validation, feature ordering, scaling, and prediction. The module turns new steel plate measurements into a predicted defect type.
 
-Taken together, the project demonstrates a complete, reproducible machine-learning workflow for steel plate defect analysis and prediction, from data understanding through modeling to an interactive prediction application. It does not claim industrial deployment or guaranteed defect detection.
+Taken together, the project demonstrates a complete, reproducible machine-learning workflow for steel plate defect analysis and prediction, from data understanding through modeling to a reusable prediction pipeline. It does not claim industrial deployment or guaranteed defect detection.
 
-## 16. Project Structure
+## 15. Project Structure
 
 The final structure of the repository is:
 
 ```
 steel-plate-quality-control/
-├── app/
-│   └── app.py
 ├── data/
 ├── notebooks/
 │   └── steel_plate_quality_control.ipynb
@@ -474,18 +448,9 @@ steel-plate-quality-control/
 │   ├── test_prediction.py
 │   └── verify_model.py
 ├── README.md
-├── REAL_APPLICATION_ROADMAP.md
 └── requirements.txt
 ```
 
-The `outputs/figures/` directory contains the report-quality figures generated for this document (for example, the defect distribution, correlation heatmap, model comparison, clustering, outlier, and feature importance figures, as well as a screenshot of the Streamlit application).
+The `outputs/figures/` directory contains the report-quality figures generated for this document (for example, the defect distribution, correlation heatmap, model comparison, clustering, outlier, and feature importance figures).
 
-## 17. Reproducibility / Running the Application
-
-The application can be started from the project root with:
-
-```
-.venv\Scripts\python -m streamlit run app/app.py
-```
-
-The application loads the saved model artifacts and runs predictions using the existing trained model. It does not retrain the model.
+The prediction pipeline loads the saved model artifacts and runs predictions using the existing trained model. It does not retrain the model.
