@@ -43,10 +43,10 @@ export function TryExample({ rows, onLoad }: TryExampleProps) {
   return (
     <div className="space-y-3">
       <p className="text-sm leading-relaxed text-steel-dim">
-        Pick a defect type, then a row of that type from the original dataset
-        to load into the form. The actual defect shown is only for reference;
-        it is never used as model input. The model may not always predict the
-        example correctly.
+        Pick a defect type, then a row of that type from the held-out test set
+        (rows the model never saw during training) to load into the form. The
+        actual defect shown is only for reference; it is never used as model
+        input. The model may not always predict the example correctly.
       </p>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -68,7 +68,7 @@ export function TryExample({ rows, onLoad }: TryExampleProps) {
         </label>
 
         <label className="block">
-          <span className="field-label">Choose an example (dataset row)</span>
+          <span className="field-label">Choose an example (test-set row)</span>
           <div className="field">
             <select
               className="field-input field-select"

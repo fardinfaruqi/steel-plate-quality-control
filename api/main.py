@@ -21,6 +21,7 @@ import pandas as pd
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from sklearn.model_selection import train_test_split
 
 from src.predict import get_feature_names, predict_defect
 
@@ -105,7 +106,13 @@ def group_slug(group_name):
 
 @lru_cache(maxsize=1)
 def load_examples():
-    """Return (X, y, feature_order) for ALL dataset rows.
+    """Return (X, y, feature_order) for the HELD-OUT TEST SET ONLY.
+
+    The notebook splits the data with ``train_test_split(test_size=0.20,
+    random_state=42, stratify=y)``; the model never saw the test rows
+    during training. This function reproduces that exact deterministic
+    split so the frontend can load genuine test-set examples instead of
+    mixing training rows in.
 
     X columns are reordered to the model's feature order. y holds the
     actual defect type, used only to label examples for reference; it is
@@ -118,9 +125,18 @@ def load_examples():
     df = df.drop(columns=FAULT_COLUMNS)
     X = df.drop(columns=["Defect_Type"])
     y = df["Defect_Type"]
+
+    _, X_test, _, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.20,
+        random_state=42,
+        stratify=y,
+    )
+
     feature_order = get_feature_names()
-    X = X[feature_order]
-    return X, y, feature_order
+    X_test = X_test[feature_order]
+    return X_test, y_test, feature_order
 
 
 app = FastAPI(title="Steel Plate Defect Predictor API")
@@ -179,7 +195,7 @@ def examples():
         "feature_order": feature_order,
         "rows": [
             {
-                "index": i,
+                "index": int(X.index[i]),
                 "defect": y.iloc[i],
                 "values": X.iloc[i].tolist(),
             }

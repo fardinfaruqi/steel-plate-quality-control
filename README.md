@@ -220,3 +220,36 @@ The lab report covers the data analysis, preprocessing, model experiments, evalu
 ## License / Academic Note
 
 This repository represents an academic/course project demonstrating a machine-learning workflow. It is provided for educational purposes and is not licensed for commercial or production use.
+
+## User Interface
+
+The project ships with a web UI (FastAPI backend + React frontend) that lets you interact with the trained SVM directly.
+
+### UI Screenshot
+
+![Steel Plate Defect Predictor UI](outputs/figures/ui_screenshot.png)
+
+### Running the UI
+
+In two separate terminals, from the project root:
+
+```bash
+# 1. Start the prediction API (port 8000)
+.venv\Scripts\python.exe -m uvicorn api.main:app --port 8000
+
+# 2. Start the React frontend (port 5173)
+cd frontend
+npm install
+npm run dev
+```
+
+Then open `http://localhost:5173` in your browser. The frontend proxies `/api` to the FastAPI backend, so the two servers must run together.
+
+### Using the UI
+
+- **About the model** — expand to see the final model, kernel, hyperparameters, and test metrics.
+- **Try an Example** — pick a defect type, then one of the held-out **test-set rows** (rows the model never saw during training) to load its measurements into the form. The actual defect is shown only for reference; it is never used as model input.
+- **Plate Measurements** — enter (or load) the 27 measured features, grouped into Position, Geometric Measurements, Luminosity, Conveyor / Steel Information, and Shape / Edge / Area Features. Binary features (e.g. `TypeOfSteel_A300`) are offered as dropdowns.
+- **Predict Defect** — runs the tuned RBF SVM on the entered measurements and displays the predicted defect class.
+
+> Note: The model is about 76% accurate on unseen test data, so predictions are not always correct — especially on genuine test-set examples. The UI is a decision-support tool and does not provide probability/confidence output (the saved SVC was trained with `probability=False`).
