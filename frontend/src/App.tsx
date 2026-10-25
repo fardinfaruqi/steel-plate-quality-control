@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { getExamples, getMetadata, predict } from './api'
 import type { ExampleRow, FeatureKind, Metadata } from './types'
 import { Header } from './components/Header'
@@ -10,6 +10,9 @@ import { ResultPanel } from './components/ResultPanel'
 import { Notice } from './components/Notice'
 
 type NoticeState = { variant: 'success' | 'error'; text: string } | null
+
+const LEAD =
+  'Predict the defect type on a steel plate from 27 measured features.'
 
 export default function App() {
   const [metadata, setMetadata] = useState<Metadata | null>(null)
@@ -101,128 +104,140 @@ export default function App() {
 
   if (metaError) {
     return (
-      <div className="app-glow flex min-h-screen items-center justify-center px-6">
-        <div className="panel max-w-md p-6 text-center">
-          <p className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-molten">
-            API unreachable
-          </p>
-          <p className="mt-2 text-sm text-steel">
-            {metaError}. Make sure the API is running (uvicorn api.main:app
-            --port 8000) and reload.
-          </p>
-        </div>
+      <div className="app">
+        <Header />
+        <main id="main" className="workspace container">
+          <div className="state">
+            <h2 className="state__title">The model did not load</h2>
+            <p className="state__body">
+              {metaError}. Make sure the API is running (uvicorn
+              api.main:app --port 8000) and reload the page.
+            </p>
+          </div>
+        </main>
       </div>
     )
   }
 
-  const featureCount = metadata?.feature_order.length ?? 27
-
-  return (
-    <div className="app-glow min-h-screen font-sans text-steel">
-      <div className="mx-auto flex max-w-[1440px]">
-        <aside className="sidebar-glow hidden w-72 shrink-0 border-r border-hairline lg:block">
-          <div className="sticky top-0 p-6">
-            {metadata && (
-              <SidebarConsole
-                modelInfo={metadata.model_info}
-                noProbabilityNote={metadata.no_probability_note}
-                featureCount={featureCount}
-              />
-            )}
-          </div>
-        </aside>
-
-        <main className="min-w-0 flex-1 px-5 py-8 lg:px-10">
-          <div className="lg:hidden">
-            {metadata && (
-              <SidebarConsole
-                modelInfo={metadata.model_info}
-                noProbabilityNote={metadata.no_probability_note}
-                featureCount={featureCount}
-              />
-            )}
-          </div>
-
-          <Header />
-
-          <div className="mt-4 space-y-3">
-            <Expander title="About the model">
-              <ul className="space-y-1.5 text-sm">
-                {metadata?.about_model &&
-                  Object.entries(metadata.about_model).map(([label, value]) => (
-                    <li key={label}>
-                      <span className="font-mono text-[0.72rem] uppercase tracking-[0.1em] text-steel-dim">
-                        {label}:{' '}
-                      </span>
-                      <span className="text-hot-white">{value}</span>
-                    </li>
-                  ))}
-              </ul>
-            </Expander>
-
-            <Expander title="Try an Example">
-              {examples ? (
-                <TryExample rows={examples} onLoad={handleLoadExample} />
-              ) : (
-                <p className="text-sm text-steel-dim">Loading examples…</p>
-              )}
-            </Expander>
-          </div>
-
-          <div className="my-6 border-t border-hairline" />
-
-          <div className="mb-1 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-3">
-            <h3 className="font-display text-[1.35rem] font-extrabold uppercase tracking-[0.02em] text-hot-white [font-stretch:125%]">
-              Plate Measurements
-            </h3>
-            <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-molten">
-              {featureCount} features · model order
-            </span>
-          </div>
-          <p className="mb-4 text-sm leading-relaxed text-steel-dim">
-            Enter the {featureCount} measured features. Feature names follow
-            the trained model; values are reordered internally to the exact
-            model order.
+  if (!metadata) {
+    return (
+      <div className="app">
+        <Header />
+        <main id="main" className="workspace container">
+          <p className="lead">{LEAD}</p>
+          <p className="visually-hidden" role="status">
+            Loading the model metadata and the held-out rows.
           </p>
-
-          {metadata?.groups.map((group) => (
-            <FeaturePanel
-              key={group.slug}
-              group={group}
-              kinds={kinds}
-              values={values}
-              onValueChange={handleValueChange}
-            />
-          ))}
-
-          <div className="my-6 border-t border-hairline" />
-
-          <button
-            type="button"
-            className="btn-primary w-full cursor-pointer px-4 py-3"
-            onClick={() => void handlePredict()}
-            disabled={predicting || !metadata}
-          >
-            {predicting ? 'Predicting…' : 'Predict Defect'}
-          </button>
-
-          {result && (
-            <ResultPanel
-              prediction={result}
-              cValue={metadata?.model_info.C ?? '10'}
-              featureCount={featureCount}
-            />
-          )}
-
-          {notice && <div className="mt-4">{notice.variant === 'error' ? <Notice variant="error">{notice.text}</Notice> : <Notice variant="success">{notice.text}</Notice>}</div>}
-
-          <div className="my-6 border-t border-hairline" />
-
-          <p className="text-xs leading-relaxed text-steel-dim">
-            {metadata?.disclaimer}
-          </p>
+          <div className="work" aria-busy="true">
+            <div className="column">
+              <div className="skeleton skeleton--strip" />
+              <div className="skeleton skeleton--console" />
+            </div>
+            <div className="rail">
+              <div className="skeleton skeleton--rail" />
+            </div>
+          </div>
         </main>
       </div>
+    )
+  }
+
+  const featureCount = metadata.feature_order.length
+
+  return (
+    <div className="app">
+      <a className="skip" href="#main">
+        Skip to content
+      </a>
+
+      <Header />
+
+      <main id="main" className="workspace container">
+        <p className="lead">{LEAD}</p>
+
+        <div className="work">
+          <div className="column">
+            {examples && (
+              <TryExample rows={examples} onLoad={handleLoadExample} />
+            )}
+
+            <section className="console" aria-labelledby="measurements">
+              <div className="console__head">
+                <div className="card__head">
+                  <h2 className="card__title" id="measurements">
+                    Plate measurements
+                  </h2>
+                  <span className="card__count">{featureCount} features</span>
+                </div>
+                <p className="card__note">
+                  Enter the measurements, or load a held-out row to fill them.
+                  Values are sent in the model’s own order.
+                </p>
+              </div>
+              {metadata.groups.map((group) => (
+                <FeaturePanel
+                  key={group.slug}
+                  group={group}
+                  kinds={kinds}
+                  values={values}
+                  onValueChange={handleValueChange}
+                />
+              ))}
+            </section>
+          </div>
+
+          <aside className="rail">
+            <div className="rail__sticky">
+              <button
+                type="button"
+                className="btn btn--primary btn--block"
+                onClick={() => void handlePredict()}
+                disabled={predicting || !metadata}
+                aria-busy={predicting}
+              >
+                {predicting ? 'Predicting…' : 'Predict defect'}
+              </button>
+
+              {result && (
+                <ResultPanel
+                  prediction={result}
+                  cValue={metadata.model_info.C ?? '10'}
+                  featureCount={featureCount}
+                />
+              )}
+
+              {notice?.variant === 'error' && (
+                <Notice variant="error">{notice.text}</Notice>
+              )}
+            </div>
+
+            <SidebarConsole
+              modelInfo={metadata.model_info}
+              noProbabilityNote={metadata.no_probability_note}
+              featureCount={featureCount}
+            />
+          </aside>
+        </div>
+
+        <section className="about">
+          <Expander title="About the model">
+            <dl className="record__list">
+              {Object.entries(metadata.about_model).map(([label, value]) => (
+                <Fragment key={label}>
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </Fragment>
+              ))}
+            </dl>
+          </Expander>
+        </section>
+      </main>
+
+      <footer className="foot">
+        <div className="container">
+          <p className="disclaimer">{metadata.disclaimer}</p>
+        </div>
+      </footer>
     </div>
   )
 }

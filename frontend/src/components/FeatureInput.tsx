@@ -53,7 +53,7 @@ function NumberField({
     <input
       ref={ref}
       type="number"
-      className="field-input"
+      className="field__input"
       value={raw}
       step={step}
       onChange={handleChange}
@@ -73,19 +73,19 @@ export function FeatureInput({
 
   if (kind === 'binary') {
     return (
-      <label htmlFor={id} className="block">
-        <span className="field-label">{feature}</span>
-        <div className="field">
+      <label htmlFor={id} className="field">
+        <span className="field__label">{feature}</span>
+        <span className="field__wrap field__wrap--select">
           <select
             id={id}
-            className="field-input field-select"
+            className="field__input field__input--select"
             value={value}
             onChange={(e) => onChange(Number(e.target.value))}
           >
             <option value={0}>0</option>
             <option value={1}>1</option>
           </select>
-        </div>
+        </span>
       </label>
     )
   }
@@ -93,16 +93,16 @@ export function FeatureInput({
   const integer = kind === 'integer'
 
   return (
-    <label htmlFor={id} className="block">
-      <span className="field-label">{feature}</span>
-      <div className="field">
+    <label htmlFor={id} className="field">
+      <span className="field__label">{feature}</span>
+      <span className="field__wrap">
         <NumberField
           value={value}
           step={integer ? 1 : 0.001}
           precision={integer ? undefined : 4}
           onChange={onChange}
         />
-      </div>
+      </span>
     </label>
   )
 }

@@ -15,19 +15,14 @@ export function FeaturePanel({
   onValueChange,
 }: FeaturePanelProps) {
   return (
-    <section
-      className="panel mb-4 p-4"
-      aria-label={`${group.name} measurements`}
-    >
-      <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h4 className="font-display text-[0.92rem] font-extrabold uppercase tracking-[0.12em] text-hot-white [font-stretch:125%]">
-          {group.name}
-        </h4>
-        <span className="whitespace-nowrap font-mono text-[0.68rem] uppercase tracking-[0.14em] text-molten">
-          {String(group.features.length).padStart(2, '0')} inputs
+    <section aria-label={`${group.name} measurements`}>
+      <div className="group__head">
+        <h3 className="group__title">{group.name}</h3>
+        <span className="group__count">
+          {group.features.length} {group.features.length === 1 ? 'input' : 'inputs'}
         </span>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="group__fields">
         {group.features.map((feature) => (
           <FeatureInput
             key={feature}

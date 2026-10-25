@@ -36,66 +36,87 @@ export function TryExample({ rows, onLoad }: TryExampleProps) {
     if (!selectedRow) return
     onLoad(selectedRow)
     setLoaded(
-      `Example loaded from row ${selectedRow.index} (actual defect: ${selectedRow.defect}). Click 'Predict Defect' below to run the model.`,
+      `Row ${selectedRow.index} loaded. Actual defect ${selectedRow.defect}. The model never saw this row.`,
     )
   }
 
   return (
-    <div className="space-y-3">
-      <p className="text-sm leading-relaxed text-steel-dim">
-        Pick a defect type, then a row of that type from the held-out test set
-        (rows the model never saw during training) to load into the form. The
-        actual defect shown is only for reference; it is never used as model
-        input. The model may not always predict the example correctly.
-      </p>
-
-      <div className="grid gap-3 sm:grid-cols-2">
-        <label className="block">
-          <span className="field-label">Defect type</span>
-          <div className="field">
-            <select
-              className="field-input field-select"
-              value={selectedType}
-              onChange={(e) => changeType(e.target.value)}
-            >
-              {counts.map(([defect, count]) => (
-                <option key={defect} value={defect}>
-                  {defect} ({count})
-                </option>
-              ))}
-            </select>
-          </div>
-        </label>
-
-        <label className="block">
-          <span className="field-label">Choose an example (test-set row)</span>
-          <div className="field">
-            <select
-              className="field-input field-select"
-              value={selectedRow ? selectedRow.index : ''}
-              onChange={(e) => setSelectedIndex(Number(e.target.value))}
-              disabled={rowsForType.length === 0}
-            >
-              {rowsForType.map((row) => (
-                <option key={row.index} value={row.index}>
-                  Row {row.index}
-                </option>
-              ))}
-            </select>
-          </div>
-        </label>
+    <section className="card" aria-labelledby="example-title">
+      <div className="card__head">
+        <h2 className="card__title" id="example-title">
+          Load a held-out row
+        </h2>
+        <span className="card__count">
+          {rows.length} {rows.length === 1 ? 'row' : 'rows'}
+        </span>
       </div>
 
-      <button
-        type="button"
-        className="btn-secondary w-full cursor-pointer px-4 py-2.5"
-        onClick={load}
-        disabled={!selectedRow}
-      >
-        Load Example Values
-      </button>
+      {rows.length === 0 ? (
+        <p className="card__note">
+          The API returned no test rows, so there is nothing to load. Restart
+          the service (uvicorn api.main:app --port 8000) and reload.
+        </p>
+      ) : (
+        <>
+          <p className="card__note">
+            Pick a defect type, then a held-out row the model never saw during
+            training. The actual defect is for reference only; it is never
+            model input.
+          </p>
 
-      {loaded && <Notice variant="success">{loaded}</Notice>}
-    </div>
+          <div className="example__row">
+            <label className="field">
+              <span className="field__label">Defect type</span>
+              <span className="field__wrap field__wrap--select">
+                <select
+                  className="field__input field__input--select"
+                  value={selectedType}
+                  onChange={(e) => changeType(e.target.value)}
+                >
+                  {counts.map(([defect, count]) => (
+                    <option key={defect} value={defect}>
+                      {defect} ({count})
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+
+            <label className="field">
+              <span className="field__label">Test-set row</span>
+              <span className="field__wrap field__wrap--select">
+                <select
+                  className="field__input field__input--select"
+                  value={selectedRow ? selectedRow.index : ''}
+                  onChange={(e) => setSelectedIndex(Number(e.target.value))}
+                  disabled={rowsForType.length === 0}
+                >
+                  {rowsForType.map((row) => (
+                    <option key={row.index} value={row.index}>
+                      Row {row.index}
+                    </option>
+                  ))}
+                </select>
+              </span>
+            </label>
+
+            <button
+              type="button"
+              className="btn"
+              onClick={load}
+              disabled={!selectedRow}
+            >
+              Load row
+            </button>
+          </div>
+
+          {loaded && (
+            <div className="example__status">
+              <Notice variant="status">{loaded}</Notice>
+            </div>
+          )}
+        </>
+      )}
+    </section>
   )
 }
